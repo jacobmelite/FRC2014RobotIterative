@@ -63,7 +63,7 @@ public class Catapult {
     }
 
     public boolean isCatapultDown() {
-        System.out.println(limitSwitch.get());
+      //  System.out.println(limitSwitch.get());
         return !limitSwitch.get();
     }
 

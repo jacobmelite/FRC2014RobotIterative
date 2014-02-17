@@ -33,15 +33,15 @@ public class CatcherPanel {
     }
     
     /**
-     * @return true if the doublesolenoid is kOff
+     * @return true if the doublesolenoid is kForward
      */
     public boolean isBloomed() {
-        return piston.get().equals(DoubleSolenoid.Value.kOff);
+        return piston.get().equals(DoubleSolenoid.Value.kForward);
     }
     /**
      * @return true if the doublesolenoid is kForward
      */
     public boolean isWilted(){
-        return piston.get().equals(DoubleSolenoid.Value.kForward);
+        return piston.get().equals(DoubleSolenoid.Value.kReverse);
     }
 }

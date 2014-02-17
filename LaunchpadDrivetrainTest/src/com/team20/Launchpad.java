@@ -40,6 +40,8 @@ public class Launchpad extends IterativeRobot {
     CatcherPanel rightPanel, leftPanel, backPanel;
     boolean shootAndBringBack = false, spitBallOut = false, bringBack = false, catcherOverride = false;
     long shootAndBringBackStartTime, spitBallOutStartTime, bringBackStartTime;
+    DriverStationLCD dsLCD;
+    public Vision vision;
 
     //LEDs leds;
     public void robotInit() {
@@ -75,6 +77,13 @@ public class Launchpad extends IterativeRobot {
         button8 = operatorController.getButton(8);
         button9 = operatorController.getButton(9);
         button10 = operatorController.getButton(10);
+        dsLCD = DriverStationLCD.getInstance();
+    }
+
+    public void autonomousInit() {
+        //start vision thread and connect with beaglebone
+       /* vision = new Vision();*/
+
     }
 
     /**
@@ -82,6 +91,13 @@ public class Launchpad extends IterativeRobot {
      */
     public void autonomousPeriodic() {
         //leds.setMode(1);
+      /*  if (!vision.isRedBallInfoUpdated()) {
+         vision.lookForRedBallInfo();
+         }
+         if (vision.isRedBallInfoUpdated()) {
+         //execute auto code here
+            
+         }*/
     }
 
     /**
@@ -92,25 +108,27 @@ public class Launchpad extends IterativeRobot {
         drive.arcadeDrive(driverGamepad.getLeftY(), driverGamepad.getAnalogTriggers());
         collector.update();
         //catapult.drive(operatorController.getLeftY());
-        catapult.drive(0);
-        DriverStationLCD dsLCD = DriverStationLCD.getInstance();
 
+        //driver station
         if (catapult.isCatapultDown()) {
             dsLCD.println(DriverStationLCD.Line.kUser1, 1, "Catapult is: DOWN");
         } else if (!catapult.isCatapultDown()) {
-            dsLCD.println(DriverStationLCD.Line.kUser1, 1, "Catapult is: UP");
+            dsLCD.println(DriverStationLCD.Line.kUser1, 1, "Catapult is: UP  ");
         }
+        dsLCD.updateLCD();
+
+        //driver trigger buttons
         if (rightTrigger.get()) {
             drive.lowGear();
         } else if (leftTrigger.get()) {
             drive.highGear();
         }
 
-        //left shoulder buttons
+        //operator left shoulder buttons
         if (button5.get()) {
             //disengage motors, delay, disengage ratchet, delay, smallspotshotretract
             //shoots and retracts
-            if (!collector.isWilted()) {
+            if (!collector.isWilted() && !backPanel.isWilted()) {
                 catapult.disengageMotors();
                 shootAndBringBack = true;
                 shootAndBringBackStartTime = System.currentTimeMillis();
@@ -118,20 +136,22 @@ public class Launchpad extends IterativeRobot {
         } else if (button7.get()) {
             //disengage ratchet, delay, reengage ratchet
             //spits the ball out
-            catapult.engageMotors();
+            // catapult.engageMotors();
             catapult.disengageRatchet();
             spitBallOutStartTime = System.currentTimeMillis();
             spitBallOut = true;
+            bringBack = false;
+            shootAndBringBack = false;
         }
 
-        //right shoulder buttons
+        //operator right shoulder buttons
         if (button6.get()) {
             collector.wilt();
         } else if (button8.get()) {
             collector.bloom();
         }
 
-        //1/2/3/4 buttons
+        //operator 1/2/3/4 buttons
         if (button4.get()) {
             collector.drive();
         } else if (button2.get()) {
@@ -143,7 +163,8 @@ public class Launchpad extends IterativeRobot {
             catcherOverride = !catcherOverride;
         }
         if (button9.get()) {
-            catapult.disengageMotors();
+            // catapult.disengageMotors();
+            catapult.drive(0);
             shootAndBringBack = false;
             bringBack = false;
             spitBallOut = false;
@@ -151,7 +172,7 @@ public class Launchpad extends IterativeRobot {
             //catapult.engageMotors();
             catapult.smallSpotShotRetract();
         }
-        if (!button10.get()) {
+        if (!button10.get() && !spitBallOut/* && !shootAndBringBack*/ && !bringBack) {
             catapult.drive(0);
         }
 
@@ -204,6 +225,7 @@ public class Launchpad extends IterativeRobot {
         }
         if (spitBallOut) {
             if (System.currentTimeMillis() - spitBallOutStartTime >= 2000) {
+                System.out.println(System.currentTimeMillis() - spitBallOutStartTime);
                 catapult.engageRatchet();
                 spitBallOut = false;
             }
@@ -214,5 +236,17 @@ public class Launchpad extends IterativeRobot {
             }
         }
 
+        //led code
+     /*   if (shootAndBringBack) {//shooting
+         leds.setMode(5);
+         }
+         else if(bringBack){//pulling back
+         leds.setMode(6);
+         }
+         else if (drive.isInHighGear()) {
+         leds.setMode(3);
+         } else {
+         leds.setMode(4);
+         }*/
     }
 }
