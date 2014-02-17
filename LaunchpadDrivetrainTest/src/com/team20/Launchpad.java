@@ -136,7 +136,6 @@ public class Launchpad extends IterativeRobot {
         } else if (button7.get()) {
             //disengage ratchet, delay, reengage ratchet
             //spits the ball out
-            // catapult.engageMotors();
             catapult.disengageRatchet();
             spitBallOutStartTime = System.currentTimeMillis();
             spitBallOut = true;
@@ -169,7 +168,6 @@ public class Launchpad extends IterativeRobot {
             bringBack = false;
             spitBallOut = false;
         } else if (button10.get()) {
-            //catapult.engageMotors();
             catapult.smallSpotShotRetract();
         }
         if (!button10.get() && !spitBallOut/* && !shootAndBringBack*/ && !bringBack) {
@@ -216,7 +214,7 @@ public class Launchpad extends IterativeRobot {
 
         //statements for delayed actions
         if (shootAndBringBack) {
-            if (System.currentTimeMillis() - shootAndBringBackStartTime >= 400) {
+            if (System.currentTimeMillis() - shootAndBringBackStartTime >= 300) {
                 catapult.disengageRatchet();
                 shootAndBringBack = false;
                 bringBack = true;
@@ -231,8 +229,9 @@ public class Launchpad extends IterativeRobot {
             }
         }
         if (bringBack) {
-            if (System.currentTimeMillis() - bringBackStartTime >= 500) {
+            if (System.currentTimeMillis() - bringBackStartTime >= 500&&System.currentTimeMillis() - bringBackStartTime <=2000) {
                 catapult.smallSpotShotRetract();
+                bringBack = false;
             }
         }
 
