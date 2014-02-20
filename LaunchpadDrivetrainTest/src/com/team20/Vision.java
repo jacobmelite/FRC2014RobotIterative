@@ -25,7 +25,8 @@ public class Vision {
             horizontalX = 0, horizontalY = 0,
             verticalX = 0, verticalY = 0;
     private int mode = 0;
-    public final int CAMERA_PROCESSING_TIME = 500, THREAD_TIMEOUT_TIME = 15000, DATA_CYCLE_TIME = CAMERA_PROCESSING_TIME + 200;
+    public final int CAMERA_PROCESSING_TIME = 400, THREAD_TIMEOUT_TIME = 15000, DATA_CYCLE_TIME = CAMERA_PROCESSING_TIME + 100, BALL_CENTERED_PIXELS = 300;
+    public final double BALL_CENTERED_TOLERANCE = .08;
     //NetworkTable visionTable = NetworkTable.getTable("Vision");
     private SocketConnection sc;
     private OutputStream os;
@@ -84,8 +85,18 @@ public class Vision {
     private short addBytes(byte b, byte c) {
         short ret = (short) (b << 8);
         ret |= c;
-        return (short) (256 + ret);
+        return ret>=0 ? ret : (short)(ret+256);
     }
+   /* public boolean isBallCentered(boolean red){
+        if(red){
+            return(isBallCentered(redBallX,redBallY))
+        }else{
+            
+        }
+    }
+    private boolean isBallCentered(int x, int y){
+        
+    }*/
 
     public int getMode() {
         return mode;
@@ -98,7 +109,7 @@ public class Vision {
             //is.skip(is.available());
             os.write(b);//0 horiz 1 vert 2 red 3 blue
             os.flush();
-            Thread.sleep(CAMERA_PROCESSING_TIME);//wait for processing
+            //Thread.sleep(CAMERA_PROCESSING_TIME);//wait for processing
             os.write(5);//ask for image processing data
             os.flush();
 

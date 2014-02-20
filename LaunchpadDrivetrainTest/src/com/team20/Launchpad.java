@@ -41,7 +41,7 @@ public class Launchpad extends IterativeRobot {
     boolean shootAndBringBack = false, spitBallOut = false, bringBack = false, catcherOverride = false;
     long shootAndBringBackStartTime, spitBallOutStartTime, bringBackStartTime;
     DriverStationLCD dsLCD;
-    public Vision vision;
+    //public Vision vision;
 
     //LEDs leds;
     public void robotInit() {
